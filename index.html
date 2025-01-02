@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalogue de Jeux Vidéo</title>
+</head>
+<body>
+  <h1>Catalogue de Jeux Vidéo</h1>
+  <ul id="gameList"></ul>
+  <form id="addGameForm">
+    <input type="text" id="title" placeholder="Titre" required />
+    <input type="text" id="studio" placeholder="Studio" required />
+    <input type="text" id="platform" placeholder="Plateforme" required />
+    <input type="date" id="releaseDate" required />
+    <textarea id="description" placeholder="Description" required></textarea>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <script src="./dist/index.js" type="module"></script>
+</body>
+</html>
