@@ -2,6 +2,7 @@ console.log("Script chargé correctement !");
 
 // Charger les jeux depuis un fichier JSON
 let games: any[] = [];
+let filteredGames: any[] = [];
 
 const loadGames = async () => {
   try {
@@ -10,6 +11,7 @@ const loadGames = async () => {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     games = await response.json();
+    filteredGames = games; // Par défaut, tous les jeux sont affichés
     console.log("Données chargées :", games);
     renderGames(); // Affiche les jeux après chargement
   } catch (error) {
@@ -25,7 +27,7 @@ const renderGames = () => {
   if (gameList) {
     gameList.innerHTML = "";
 
-    games.forEach((game) => {
+    filteredGames.forEach((game) => {
       console.log(`Rendering game: ${game.titre}`);
       const li = document.createElement("li");
       li.classList.add("game-item"); // Ajout d'une classe pour le style
@@ -60,6 +62,7 @@ const renderGames = () => {
 // Fonction pour ajouter un jeu
 const addGame = (game: any) => {
   games.push(game);
+  filteredGames = games;
   renderGames();
 };
 
@@ -68,6 +71,7 @@ const removeGame = (id: number) => {
   const index = games.findIndex((game) => game.id === id);
   if (index !== -1) {
     games.splice(index, 1);
+    filteredGames = games;
     renderGames();
   }
 };
@@ -101,6 +105,38 @@ if (addGameForm) {
     addGame(newGame);
 
     addGameForm.reset(); // Réinitialise le formulaire
+  });
+}
+
+// Gestion de la recherche et des filtres
+const searchInput = document.getElementById("search") as HTMLInputElement;
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.toLowerCase();
+    filteredGames = games.filter((game) =>
+      game.titre.toLowerCase().includes(query) ||
+      game.studio.toLowerCase().includes(query) ||
+      game.plateforme.toLowerCase().includes(query)
+    );
+    renderGames();
+  });
+}
+
+// Gestion du tri
+const sortSelect = document.getElementById("sort") as HTMLSelectElement;
+if (sortSelect) {
+  sortSelect.addEventListener("change", () => {
+    const value = sortSelect.value;
+    if (value === "title") {
+      filteredGames.sort((a, b) => a.titre.localeCompare(b.titre));
+    } else if (value === "date") {
+      filteredGames.sort((a, b) => new Date(a.dateDeSortie).getTime() - new Date(b.dateDeSortie).getTime());
+    } else if (value === "title-desc") {
+      filteredGames.sort((a, b) => b.titre.localeCompare(a.titre));
+    } else if (value === "date-desc") {
+      filteredGames.sort((a, b) => new Date(b.dateDeSortie).getTime() - new Date(a.dateDeSortie).getTime());
+    }
+    renderGames();
   });
 }
 
