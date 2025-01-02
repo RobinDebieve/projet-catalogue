@@ -1,37 +1,66 @@
 console.log("Script chargé correctement !");
 
-// Exemple de données
-const games = [
-  { id: 1, titre: "Zelda", studio: "Nintendo", plateforme: "Switch", dateDeSortie: "2017-03-03" },
-  { id: 2, titre: "Halo", studio: "Bungie", plateforme: "Xbox", dateDeSortie: "2001-11-15" }
-];
+// Charger les jeux depuis un fichier JSON
+let games: any[] = [];
+
+const loadGames = async () => {
+  try {
+    const response = await fetch("./data/jeux.json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    games = await response.json();
+    console.log("Données chargées :", games);
+    renderGames(); // Affiche les jeux après chargement
+  } catch (error) {
+    console.error("Erreur lors du chargement des jeux :", error);
+  }
+};
 
 // Fonction pour afficher les jeux
 const renderGames = () => {
+  console.log("Render games called.");
   const gameList = document.getElementById("gameList");
+
   if (gameList) {
-    gameList.innerHTML = ""; // Efface la liste précédente
+    gameList.innerHTML = "";
 
     games.forEach((game) => {
+      console.log(`Rendering game: ${game.titre}`);
       const li = document.createElement("li");
+      li.classList.add("game-item"); // Ajout d'une classe pour le style
       li.innerHTML = `
         <strong>${game.titre}</strong> (${game.studio}, ${game.plateforme}) - ${game.dateDeSortie}
         <button data-id="${game.id}" class="removeBtn">Retirer</button>
+        <p class="description">${game.description}</p>
       `;
       gameList.appendChild(li);
+
+      // Ajouter un événement pour afficher/masquer la description au clic
+      li.addEventListener("click", () => {
+        const description = li.querySelector(".description") as HTMLElement;
+        description.classList.toggle("show");
+      });
     });
 
-    // Attacher des événements "Retirer"
+    // Ajouter les événements aux boutons "Retirer"
     document.querySelectorAll(".removeBtn").forEach((button) => {
       button.addEventListener("click", (e) => {
+        e.stopPropagation(); // Empêche la propagation du clic au parent
         const target = e.target as HTMLButtonElement;
         const id = parseInt(target.getAttribute("data-id") || "0");
         removeGame(id);
       });
     });
   } else {
-    console.error("Element #gameList introuvable !");
+    console.error("Element #gameList introuvable dans le DOM.");
   }
+};
+
+// Fonction pour ajouter un jeu
+const addGame = (game: any) => {
+  games.push(game);
+  renderGames();
 };
 
 // Fonction pour retirer un jeu
@@ -39,16 +68,16 @@ const removeGame = (id: number) => {
   const index = games.findIndex((game) => game.id === id);
   if (index !== -1) {
     games.splice(index, 1);
-    renderGames(); // Rafraîchit la liste
+    renderGames();
   }
 };
+
 // Gestion du formulaire d'ajout
 const addGameForm = document.getElementById("addGameForm") as HTMLFormElement;
 if (addGameForm) {
   addGameForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    // Récupérer les valeurs du formulaire
     const title = (document.getElementById("title") as HTMLInputElement).value;
     const studio = (document.getElementById("studio") as HTMLInputElement).value;
     const platform = (document.getElementById("platform") as HTMLInputElement).value;
@@ -61,21 +90,21 @@ if (addGameForm) {
       return;
     }
 
-    // Ajouter un nouveau jeu
     const newGame = {
       id: games.length + 1,
       titre: title,
       studio: studio,
       plateforme: platform,
-      dateDeSortie: releaseDate
+      dateDeSortie: releaseDate,
+      description: description
     };
-    games.push(newGame); // Ajouter au tableau
-    renderGames(); // Rafraîchir l'affichage
+    addGame(newGame);
 
-    // Réinitialiser le formulaire
-    addGameForm.reset();
+    addGameForm.reset(); // Réinitialise le formulaire
   });
 }
 
-// Charger la liste au démarrage
-renderGames();
+// Attendre le chargement complet du DOM avant de charger les jeux et de les afficher
+document.addEventListener("DOMContentLoaded", () => {
+  loadGames();
+});
