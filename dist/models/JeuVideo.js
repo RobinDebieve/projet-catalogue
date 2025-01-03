@@ -7,9 +7,8 @@ export class JeuVideo {
         this.dateDeSortie = dateDeSortie;
         this.description = description;
     }
-    // Méthode pour afficher les détails d'un jeu vidéo
     afficherDetails() {
-        console.log(`${this.titre} - ${this.studio} (${this.plateforme})`);
+        console.log(`${this.titre} - ${this.studio} sur ${this.plateforme}, sorti le ${this.dateDeSortie}.`);
     }
 }
 //# sourceMappingURL=JeuVideo.js.map

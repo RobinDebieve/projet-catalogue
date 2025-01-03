@@ -1,33 +1,49 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="./assets/styles/style.css">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catalogue de Jeux Vidéo</title>
+  <link rel="stylesheet" href="./assets/styles/style.css">
 </head>
 <body>
-  <h1>Catalogue de Jeux Vidéo</h1>
-  <input type="text" id="search" placeholder="Rechercher un jeu, une plateforme, un studio...">
-  <select id="sort">
-    <option value="">Trier par</option>
-    <option value="title">Titre (A-Z)</option>
-    <option value="title-desc">Titre (Z-A)</option>
-    <option value="date">Date (Croissant)</option>
-    <option value="date-desc">Date (Décroissant)</option>
-  </select>
-  
+  <header>
+    <h1>Catalogue de Jeux Vidéo</h1>
+    <!-- Authentification -->
+    <div id="authContainer"></div>
+  </header>
 
-  <ul id="gameList"></ul>
-  <form id="addGameForm">
-    <input type="text" id="title" placeholder="Titre" required />
-    <input type="text" id="studio" placeholder="Studio" required />
-    <input type="text" id="platform" placeholder="Plateforme" required />
-    <input type="date" id="releaseDate" required />
-    <textarea id="description" placeholder="Description" required></textarea>
-    <button type="submit">Ajouter</button>
-  </form>
+  <main>
+    <!-- Barre de recherche -->
+    <input type="text" id="search" placeholder="Rechercher un jeu..." />
+
+    <!-- Tri -->
+    <select id="sort">
+      <option value="">Trier par</option>
+      <option value="title">Titre (A-Z)</option>
+      <option value="title-desc">Titre (Z-A)</option>
+      <option value="date">Date (Croissant)</option>
+      <option value="date-desc">Date (Décroissant)</option>
+    </select>
+
+    <!-- Liste des jeux -->
+    <ul id="gameList"></ul>
+
+    <!-- Formulaire d'ajout de jeu -->
+    <form id="addGameForm">
+      <h2>Ajouter un jeu</h2>
+      <input type="text" id="title" placeholder="Titre" required />
+      <input type="text" id="studio" placeholder="Studio" required />
+      <input type="text" id="platform" placeholder="Plateforme" required />
+      <input type="date" id="releaseDate" required />
+      <textarea id="description" placeholder="Description" required></textarea>
+      <button type="submit">Ajouter</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Catalogue de Jeux Vidéo</p>
+  </footer>
 
   <script src="./dist/index.js" type="module"></script>
 </body>
