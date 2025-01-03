@@ -1,92 +1,143 @@
+/* Styles généraux */
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 0;
-    background-color: #f4f4f9;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  form {
-    margin-bottom: 20px;
-    padding: 10px;
-    background: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  form input, form textarea, form button {
-    margin: 5px;
-    padding: 10px;
-    width: calc(100% - 20px);
-    box-sizing: border-box;
-  }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  li {
-    margin: 10px 0;
-    padding: 10px;
-    background: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  button {
-    padding: 5px 10px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #ff1a1a;
-  }
-  .game-item {
-    display: flex;
-    flex-direction: column; /* Organisation en colonne */
-    padding: 10px;
-    margin: 10; /* Supprime l'espacement par défaut */
-    background-color: #f9f9f9;
-    border-bottom: 1px solid #ddd; /* Bordure en bas de chaque élément */
-    transition: background-color 0.3s;
-  }
+  font-family: Arial, sans-serif;
+  background-color: #191919;
+  color: #E3651D;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+header {
+  background-color: #E3651D;
+  color: #191919;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: bold;
+}
 
+main {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
 
-  .game-item:last-child {
-    border-bottom: none; /* Supprime la bordure pour le dernier élément */
-  }
-  
-  
-  .game-item:hover {
-    background-color: #e6e6e6;
-  }
-  
-  .description {
-    display: none;
-    margin-top: 10px;
-    padding: 5px;
-    background-color: #eef;
-    border-left: 3px solid #66f;
-    border-radius: 3px;
-    font-style: italic;
-  }
-  
-  .description.show {
-    display: block;
-  }
-  
+/* Formulaire d'ajout */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+form input, form button {
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #E3651D;
+  border-radius: 5px;
+  background-color: #191919;
+  color: #E3651D;
+}
+
+form button {
+  background-color: #E3651D;
+  color: #191919;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #191919;
+  color: #E3651D;
+}
+
+/* Liste des jeux */
+#gameList {
+  list-style: none;
+  padding: 0;
+}
+
+.game-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #E3651D;
+  border-radius: 5px;
+  background-color: #191919;
+  transition: box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.game-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.game-item button {
+  align-self: flex-end;
+  padding: 5px 10px;
+  background-color: #E3651D;
+  color: #191919;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.game-item button:hover {
+  background-color: #191919;
+  color: #E3651D;
+}
+
+/* Barre de recherche et tri */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.controls input, .controls select {
+  padding: 10px;
+  border: 1px solid #E3651D;
+  border-radius: 5px;
+  font-size: 1em;
+  background-color: #191919;
+  color: #E3651D;
+}
+
+/* Connexion utilisateur */
+#authContainer {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #E3651D;
+  border-radius: 5px;
+  background-color: #191919;
+  color: #E3651D;
+}
+
+#authContainer button {
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #E3651D;
+  color: #191919;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#authContainer button:hover {
+  background-color: #191919;
+  color: #E3651D;
+}
+
+/* Pied de page */
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #E3651D;
+  color: #191919;
+  bottom: 0;
+  width: 100%;
+}
