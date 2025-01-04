@@ -7,49 +7,68 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { SearchController } from "./SearchController.js";
-import { SortController } from "./SortController.js";
 export class GameController {
-    constructor(renderGames) {
-        this.renderGames = renderGames;
+    constructor(onGamesUpdated) {
         this.games = [];
-        this.filteredGames = [];
-        this.searchController = new SearchController();
-        this.sortController = new SortController();
+        this.onGamesUpdated = onGamesUpdated;
     }
-    loadGames(url) {
+    // Charge les jeux depuis un tableau ou JSON
+    loadGames(source) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const response = yield fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP : ${response.status}`);
+            if (typeof source === "string") {
+                try {
+                    const response = yield fetch(source);
+                    if (!response.ok) {
+                        throw new Error("Erreur lors du chargement des jeux.");
+                    }
+                    const data = yield response.json();
+                    this.games = data;
                 }
-                this.games = yield response.json();
-                this.filteredGames = [...this.games];
-                this.renderGames(this.filteredGames);
+                catch (error) {
+                    console.error("Erreur :", error);
+                    this.games = [];
+                }
             }
-            catch (error) {
-                console.error("Erreur lors du chargement des jeux :", error);
+            else {
+                this.games = source;
             }
+            this.onGamesUpdated(this.games);
         });
     }
+    // Retourne la liste des jeux
+    getGames() {
+        return this.games;
+    }
+    // Ajoute un jeu
     addGame(game) {
         this.games.push(game);
-        this.filteredGames = [...this.games];
-        this.renderGames(this.filteredGames);
+        this.onGamesUpdated(this.games);
     }
+    // Supprime un jeu par ID
     removeGame(id) {
         this.games = this.games.filter((game) => game.id !== id);
-        this.filteredGames = [...this.games];
-        this.renderGames(this.filteredGames);
+        this.onGamesUpdated(this.games);
     }
-    filterGames(query) {
-        this.filteredGames = this.searchController.filterGames(this.games, query);
-        this.renderGames(this.filteredGames);
+    // Filtrage des jeux
+    filterGames(keyword) {
+        const filteredGames = this.games.filter((game) => game.titre.toLowerCase().includes(keyword));
+        this.onGamesUpdated(filteredGames);
     }
-    sortGames(option) {
-        this.filteredGames = this.sortController.sortGames([...this.filteredGames], option);
-        this.renderGames(this.filteredGames);
+    // Tri des jeux
+    sortGames(order) {
+        if (order === "title-asc") {
+            this.games.sort((a, b) => a.titre.localeCompare(b.titre));
+        }
+        else if (order === "title-desc") {
+            this.games.sort((a, b) => b.titre.localeCompare(a.titre));
+        }
+        else if (order === "date-asc") {
+            this.games.sort((a, b) => new Date(a.dateDeSortie).getTime() - new Date(b.dateDeSortie).getTime());
+        }
+        else if (order === "date-desc") {
+            this.games.sort((a, b) => new Date(b.dateDeSortie).getTime() - new Date(a.dateDeSortie).getTime());
+        }
+        this.onGamesUpdated(this.games);
     }
 }
 //# sourceMappingURL=GameController.js.map

@@ -1,71 +1,71 @@
-import { Utilisateur } from "../models/Utilisateur.js";
-
 export class UserController {
-  private users: Utilisateur[] = [];
+  private users: any[];
+  private currentUser: any;
 
   constructor() {
+    this.users = [];
+    this.currentUser = null;
     this.loadUsers();
   }
 
-  // Charger les utilisateurs depuis users.json
-  async loadUsers() {
+  // Charge les utilisateurs depuis users.json
+  private async loadUsers() {
     try {
       const response = await fetch("./data/users.json");
       if (!response.ok) {
-        throw new Error(`Erreur HTTP : ${response.status}`);
+        throw new Error("Erreur lors du chargement des utilisateurs.");
       }
       this.users = await response.json();
-      console.log("Utilisateurs chargés :", this.users);
     } catch (error) {
-      console.error("Erreur lors du chargement des utilisateurs :", error);
+      console.error(error);
+      this.users = [];
     }
   }
 
-  // Ajouter un nouvel utilisateur
-  addUser(username: string, password: string): boolean {
-    if (this.users.find((user) => user.username === username)) {
-      alert("Nom d'utilisateur déjà pris !");
+  // Vérifie si un utilisateur est connecté
+  isLoggedIn(): boolean {
+    return this.currentUser !== null;
+  }
+
+  // Retourne l'utilisateur connecté
+  getUser() {
+    return this.currentUser;
+  }
+
+  // Ajoute un nouvel utilisateur
+  async addUser(username: string, password: string): Promise<boolean> {
+    if (this.users.find(user => user.username === username)) {
+      alert("Ce nom d'utilisateur existe déjà.");
       return false;
     }
-
-    const newUser = new Utilisateur(username, password, `${username}@email.com`);
-
+    const newUser = { username, password };
     this.users.push(newUser);
-    this.saveUsers();
-    alert("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+    await this.saveUsers();
     return true;
   }
 
-  // Authentifier un utilisateur
-  login(username: string, password: string): boolean {
-    const user = this.users.find(
-      (u) => u.username === username && u.password === password
-    );
-
-    if (user) {
-      localStorage.setItem("loggedInUser", JSON.stringify(user));
-      alert("Connexion réussie !");
-      return true;
-    } else {
-      alert("Nom d'utilisateur ou mot de passe incorrect.");
-      return false;
-    }
+  // Sauvegarde les utilisateurs dans users.json
+  private async saveUsers() {
+    await fetch("./data/users.json", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(this.users)
+    });
   }
 
-  // Vérifier si un utilisateur est connecté
-  isLoggedIn(): boolean {
-    return localStorage.getItem("loggedInUser") !== null;
+  // Connexion
+  login(username: string, password: string): boolean {
+    const user = this.users.find(user => user.username === username && user.password === password);
+    if (user) {
+      this.currentUser = user;
+      return true;
+    }
+    alert("Identifiants incorrects.");
+    return false;
   }
 
   // Déconnexion
   logout(): void {
-    localStorage.removeItem("loggedInUser");
-    alert("Déconnexion réussie !");
-  }
-
-  // Sauvegarder les utilisateurs dans users.json (simulation)
-  saveUsers() {
-    console.log("Utilisateurs mis à jour :", this.users);
-    // En environnement réel, une API backend gérerait cette sauvegarde.
+    this.currentUser = null;
   }
 }

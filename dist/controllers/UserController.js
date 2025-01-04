@@ -7,66 +7,72 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Utilisateur } from "../models/Utilisateur.js";
 export class UserController {
     constructor() {
         this.users = [];
+        this.currentUser = null;
         this.loadUsers();
     }
-    // Charger les utilisateurs depuis users.json
+    // Charge les utilisateurs depuis users.json
     loadUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const response = yield fetch("./data/users.json");
                 if (!response.ok) {
-                    throw new Error(`Erreur HTTP : ${response.status}`);
+                    throw new Error("Erreur lors du chargement des utilisateurs.");
                 }
                 this.users = yield response.json();
-                console.log("Utilisateurs chargés :", this.users);
             }
             catch (error) {
-                console.error("Erreur lors du chargement des utilisateurs :", error);
+                console.error(error);
+                this.users = [];
             }
         });
     }
-    // Ajouter un nouvel utilisateur
-    addUser(username, password) {
-        if (this.users.find((user) => user.username === username)) {
-            alert("Nom d'utilisateur déjà pris !");
-            return false;
-        }
-        const newUser = new Utilisateur(username, password, `${username}@email.com`);
-        this.users.push(newUser);
-        this.saveUsers();
-        alert("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
-        return true;
+    // Vérifie si un utilisateur est connecté
+    isLoggedIn() {
+        return this.currentUser !== null;
     }
-    // Authentifier un utilisateur
+    // Retourne l'utilisateur connecté
+    getUser() {
+        return this.currentUser;
+    }
+    // Ajoute un nouvel utilisateur
+    addUser(username, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.users.find(user => user.username === username)) {
+                alert("Ce nom d'utilisateur existe déjà.");
+                return false;
+            }
+            const newUser = { username, password };
+            this.users.push(newUser);
+            yield this.saveUsers();
+            return true;
+        });
+    }
+    // Sauvegarde les utilisateurs dans users.json
+    saveUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield fetch("./data/users.json", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(this.users)
+            });
+        });
+    }
+    // Connexion
     login(username, password) {
-        const user = this.users.find((u) => u.username === username && u.password === password);
+        const user = this.users.find(user => user.username === username && user.password === password);
         if (user) {
-            localStorage.setItem("loggedInUser", JSON.stringify(user));
-            alert("Connexion réussie !");
+            this.currentUser = user;
             return true;
         }
-        else {
-            alert("Nom d'utilisateur ou mot de passe incorrect.");
-            return false;
-        }
-    }
-    // Vérifier si un utilisateur est connecté
-    isLoggedIn() {
-        return localStorage.getItem("loggedInUser") !== null;
+        alert("Identifiants incorrects.");
+        return false;
     }
     // Déconnexion
     logout() {
-        localStorage.removeItem("loggedInUser");
-        alert("Déconnexion réussie !");
-    }
-    // Sauvegarder les utilisateurs dans users.json (simulation)
-    saveUsers() {
-        console.log("Utilisateurs mis à jour :", this.users);
-        // En environnement réel, une API backend gérerait cette sauvegarde.
+        this.currentUser = null;
     }
 }
 //# sourceMappingURL=UserController.js.map
