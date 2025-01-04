@@ -46,18 +46,20 @@ export class UserController {
             }
             const newUser = { username, password };
             this.users.push(newUser);
-            yield this.saveUsers();
-            return true;
-        });
-    }
-    // Sauvegarde les utilisateurs dans users.json
-    saveUsers() {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield fetch("./data/users.json", {
+            // Sauvegarder dans localStorage
+            localStorage.setItem("currentUser", JSON.stringify(newUser));
+            // Créer une bibliothèque vide dans bibliotheque.json
+            const libraryResponse = yield fetch("./data/bibliotheque.json");
+            const libraryData = yield libraryResponse.json();
+            libraryData[username] = [];
+            yield fetch("./data/bibliotheque.json", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(this.users)
+                body: JSON.stringify(libraryData)
             });
+            // Connecte directement l'utilisateur
+            this.currentUser = newUser;
+            return true;
         });
     }
     // Connexion
@@ -67,12 +69,19 @@ export class UserController {
             this.currentUser = user;
             return true;
         }
+        // Vérifie dans localStorage pour les nouveaux comptes
+        const storedUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+        if (storedUser && storedUser.username === username && storedUser.password === password) {
+            this.currentUser = storedUser;
+            return true;
+        }
         alert("Identifiants incorrects.");
         return false;
     }
     // Déconnexion
     logout() {
         this.currentUser = null;
+        localStorage.removeItem("currentUser");
     }
 }
 //# sourceMappingURL=UserController.js.map
