@@ -7,89 +7,111 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a, _b, _c, _d;
+var _a, _b, _c;
 import { GameController } from "./controllers/GameController.js";
 import { GameView } from "./views/GameView.js";
 import { JeuVideo } from "./models/JeuVideo.js";
 import { UserController } from "./controllers/UserController.js";
 import { UserView } from "./views/UserView.js";
+import { SortController } from "./controllers/SortController.js";
+import { SearchController } from "./controllers/SearchController.js";
 // Initialisation
 const gameView = new GameView("gameList");
-const gameController = new GameController((games) => gameView.renderGames(games));
+const gameController = new GameController((games) => {
+    gameView.renderGames(games);
+    updateControllers(games); // Met à jour les contrôleurs lors du chargement
+});
 const userController = new UserController();
 const userView = new UserView();
+// Sort and Search Controllers
+let sortController;
+let searchController;
+// Mise à jour des contrôleurs
+function updateControllers(games) {
+    // Initialisation si non définis
+    if (!sortController) {
+        sortController = new SortController(games, (sortedGames) => gameView.renderGames(sortedGames));
+    }
+    else {
+        sortController.updateGames(games); // Met à jour le tri avec les nouveaux jeux
+    }
+    if (!searchController) {
+        searchController = new SearchController(games, (filteredGames) => gameView.renderGames(filteredGames));
+    }
+    else {
+        searchController = new SearchController(games, (filteredGames) => gameView.renderGames(filteredGames));
+    }
+}
 // Chargement des jeux en fonction de l'état de connexion
 function loadGamesForUser() {
     return __awaiter(this, void 0, void 0, function* () {
         const user = userController.getUser();
         if (user) {
-            // Si connecté, charger la bibliothèque personnelle
             fetch("./data/bibliotheque.json")
-                .then(response => response.json())
-                .then(data => {
+                .then((response) => response.json())
+                .then((data) => {
                 const library = data[user.username] || [];
-                console.log("Bibliothèque chargée : ", library); // Debugging
                 gameController.loadGames(library);
             })
                 .catch(() => alert("Erreur lors du chargement de la bibliothèque."));
         }
         else {
-            // Si déconnecté, charger les jeux par défaut
             fetch("./data/jeux.json")
-                .then(response => response.json())
-                .then(data => gameController.loadGames(data))
+                .then((response) => response.json())
+                .then((data) => gameController.loadGames(data))
                 .catch(() => alert("Erreur lors du chargement des jeux."));
         }
     });
 }
-// Authentification
-const authContainer = document.getElementById("authContainer");
-if (authContainer) {
-    if (userController.isLoggedIn()) {
-        const user = userController.getUser();
-        authContainer.innerHTML = `<p>Bienvenue, ${user.username}</p><button id="logoutBtn">Déconnexion</button>`;
-        (_a = document.getElementById("logoutBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-            userController.logout();
-            alert("Déconnexion réussie.");
-            location.reload();
-        });
-    }
-    else {
-        userView.renderLoginForm("authContainer", (username, password) => {
-            var _a;
-            if (userController.login(username, password)) {
-                alert("Connexion réussie.");
-                loadGamesForUser(); // Recharge immédiatement les jeux
-                authContainer.innerHTML = `<p>Bienvenue, ${username}</p><button id="logoutBtn">Déconnexion</button>`;
-                (_a = document.getElementById("logoutBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
-                    userController.logout();
-                    alert("Déconnexion réussie.");
-                    location.reload();
-                });
-            }
-            else {
-                alert("Identifiants incorrects.");
-            }
-        });
-        const signupLink = document.createElement("p");
-        signupLink.innerHTML = "Pas encore de compte ? <a href='#' id='showSignup'>Inscrivez-vous</a>";
-        authContainer.appendChild(signupLink);
-        (_b = document.getElementById("showSignup")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
-            userView.renderSignupForm("authContainer", (username, password) => __awaiter(void 0, void 0, void 0, function* () {
-                const success = yield userController.addUser(username, password);
-                if (success) {
-                    alert("Compte créé avec succès. Connectez-vous maintenant.");
-                    location.reload();
+// Mise à jour de l'interface utilisateur
+function updateAuthUI() {
+    var _a, _b;
+    const authContainer = document.getElementById("authContainer");
+    if (authContainer) {
+        if (userController.isLoggedIn()) {
+            const user = userController.getUser();
+            authContainer.innerHTML = `<p>Bienvenue, ${user.username}</p><button id="logoutBtn">Déconnexion</button>`;
+            (_a = document.getElementById("logoutBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
+                userController.logout();
+                alert("Déconnexion réussie.");
+                location.reload();
+            });
+        }
+        else {
+            userView.renderLoginForm("authContainer", (username, password) => {
+                if (userController.login(username, password)) {
+                    alert("Connexion réussie.");
+                    loadGamesForUser();
+                    updateAuthUI();
                 }
                 else {
-                    alert("Échec de la création du compte. Nom d'utilisateur déjà pris.");
+                    alert("Identifiants incorrects.");
                 }
+            });
+            const signupLink = document.createElement("p");
+            signupLink.innerHTML =
+                "Pas encore de compte ? <a href='#' id='showSignup'>Inscrivez-vous</a>";
+            authContainer.appendChild(signupLink);
+            (_b = document.getElementById("showSignup")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                userView.renderSignupForm("authContainer", (username, password) => __awaiter(this, void 0, void 0, function* () {
+                    const success = yield userController.addUser(username, password);
+                    if (success) {
+                        alert("Compte créé avec succès. Connectez-vous maintenant.");
+                        location.reload();
+                    }
+                    else {
+                        alert("Échec de la création du compte. Nom d'utilisateur déjà pris.");
+                    }
+                }));
             }));
-        }));
+        }
     }
 }
 // Charger les jeux au démarrage
-document.addEventListener("DOMContentLoaded", loadGamesForUser);
+document.addEventListener("DOMContentLoaded", () => {
+    loadGamesForUser();
+    updateAuthUI();
+});
 // Gestion du formulaire d'ajout
 const addGameForm = document.getElementById("addGameForm");
 addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventListener("submit", (e) => {
@@ -105,51 +127,25 @@ addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventLi
     }
     const newGame = new JeuVideo(Date.now(), title, studio, platform, releaseDate, description);
     gameController.addGame(newGame);
-    // Mise à jour de la bibliothèque si connecté
-    const user = userController.getUser();
-    if (user) {
-        fetch("./data/bibliotheque.json")
-            .then(response => response.json())
-            .then(data => {
-            data[user.username] = gameController.getGames();
-            return fetch("./data/bibliotheque.json", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-        });
-    }
+    updateControllers(gameController.getGames()); // Mise à jour des contrôleurs
     addGameForm.reset();
 });
 // Recherche et tri
-(_c = document.getElementById("search")) === null || _c === void 0 ? void 0 : _c.addEventListener("input", (e) => {
-    gameController.filterGames(e.target.value.toLowerCase());
+(_a = document.getElementById("search")) === null || _a === void 0 ? void 0 : _a.addEventListener("input", (e) => {
+    const keyword = e.target.value.toLowerCase();
+    searchController.filterGames(keyword);
 });
-(_d = document.getElementById("sort")) === null || _d === void 0 ? void 0 : _d.addEventListener("change", (e) => {
-    gameController.sortGames(e.target.value);
+(_b = document.getElementById("sort")) === null || _b === void 0 ? void 0 : _b.addEventListener("change", (e) => {
+    const sortOption = e.target.value;
+    sortController.sortGames(sortOption); // Tri en fonction de l'option choisie
 });
-// Suppression d'un jeu
-const gameList = document.getElementById("gameList");
-gameList === null || gameList === void 0 ? void 0 : gameList.addEventListener("click", (e) => {
+// Gestion de la suppression
+(_c = document.getElementById("gameList")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", (e) => {
     const target = e.target;
     if (target.classList.contains("removeBtn")) {
-        e.stopPropagation();
         const id = parseInt(target.getAttribute("data-id") || "0", 10);
         gameController.removeGame(id);
-        // Mise à jour de la bibliothèque si connecté
-        const user = userController.getUser();
-        if (user) {
-            fetch("./data/bibliotheque.json")
-                .then(response => response.json())
-                .then(data => {
-                data[user.username] = gameController.getGames();
-                return fetch("./data/bibliotheque.json", {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data)
-                });
-            });
-        }
+        updateControllers(gameController.getGames()); // Mise à jour des contrôleurs après suppression
     }
 });
 //# sourceMappingURL=index.js.map

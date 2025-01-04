@@ -1,8 +1,12 @@
 export class SearchController {
-    filterGames(games, query) {
-        return games.filter((game) => game.titre.toLowerCase().includes(query) ||
-            game.studio.toLowerCase().includes(query) ||
-            game.plateforme.toLowerCase().includes(query));
+    constructor(games, onGamesUpdated) {
+        this.games = games;
+        this.onGamesUpdated = onGamesUpdated;
+    }
+    // Filtre les jeux en fonction du mot-clé
+    filterGames(keyword) {
+        const filteredGames = this.games.filter((game) => game.titre.toLowerCase().includes(keyword));
+        this.onGamesUpdated(filteredGames);
     }
 }
 //# sourceMappingURL=SearchController.js.map

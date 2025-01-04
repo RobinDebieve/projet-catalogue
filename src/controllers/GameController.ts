@@ -45,26 +45,4 @@ export class GameController {
     this.games = this.games.filter((game) => game.id !== id);
     this.onGamesUpdated(this.games);
   }
-
-  // Filtrage des jeux
-  filterGames(keyword: string) {
-    const filteredGames = this.games.filter((game) =>
-      game.titre.toLowerCase().includes(keyword)
-    );
-    this.onGamesUpdated(filteredGames);
-  }
-
-  // Tri des jeux
-  sortGames(order: string) {
-    if (order === "title-asc") {
-      this.games.sort((a, b) => a.titre.localeCompare(b.titre));
-    } else if (order === "title-desc") {
-      this.games.sort((a, b) => b.titre.localeCompare(a.titre));
-    } else if (order === "date-asc") {
-      this.games.sort((a, b) => new Date(a.dateDeSortie).getTime() - new Date(b.dateDeSortie).getTime());
-    } else if (order === "date-desc") {
-      this.games.sort((a, b) => new Date(b.dateDeSortie).getTime() - new Date(a.dateDeSortie).getTime());
-    }
-    this.onGamesUpdated(this.games);
-  }
 }
