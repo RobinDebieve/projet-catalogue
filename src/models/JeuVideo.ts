@@ -1,4 +1,6 @@
-export class JeuVideo {
+import { IJeuVideo } from "./IJeuVideo.js";
+
+export class JeuVideo implements IJeuVideo {
   constructor(
     public id: number,
     public titre: string,

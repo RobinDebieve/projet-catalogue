@@ -1,21 +1,19 @@
 export class Bibliotheque {
-    constructor(idUtilisateur, idJeux) {
+    constructor(idUtilisateur, gameIds) {
         this.idUtilisateur = idUtilisateur;
-        this.idJeux = idJeux;
+        this.gameIds = gameIds;
     }
-    // Méthode pour ajouter un jeu
     ajouterJeu(idJeu) {
-        if (!this.idJeux.includes(idJeu)) {
-            this.idJeux.push(idJeu);
+        if (!this.gameIds.includes(idJeu)) {
+            this.gameIds.push(idJeu);
             console.log(`Jeu ${idJeu} ajouté à la bibliothèque.`);
         }
         else {
             console.log(`Jeu ${idJeu} est déjà dans la bibliothèque.`);
         }
     }
-    // Méthode pour retirer un jeu
     retirerJeu(idJeu) {
-        this.idJeux = this.idJeux.filter((jeu) => jeu !== idJeu);
+        this.gameIds = this.gameIds.filter((jeu) => jeu !== idJeu);
         console.log(`Jeu ${idJeu} retiré de la bibliothèque.`);
     }
 }

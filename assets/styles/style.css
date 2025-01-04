@@ -1,82 +1,111 @@
-/* Styles généraux */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #191919;
-  color: #E3651D;
+/* RESET GLOBALE */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* STYLES GENERAUX */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #191919;
+  color: #F0F0F0;              /* Texte clair sur fond sombre */
+  line-height: 1.6;
+}
+
+/* HEADER */
 header {
-  background-color: #E3651D;
-  color: #191919;
-  padding: 10px 20px;
+  background-color: #E3651D;   /* Couleur d'accent */
+  color: #F0F0F0;             /* Texte clair */
   text-align: center;
+  padding: 1rem;
   font-size: 1.5em;
   font-weight: bold;
+  margin-bottom: 1rem;         /* Pour aérer un peu */
 }
 
+/* MAIN */
 main {
-  padding: 20px;
   max-width: 900px;
   margin: 0 auto;
+  padding: 1rem;
 }
 
-/* Formulaire d'ajout */
+/* FORMULAIRE D'AJOUT */
 form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
 }
 
-form input, form button {
-  padding: 10px;
+form label {
+  font-weight: bold;
+  color: #F0F0F0;             /* Couleur de texte pour les labels */
+}
+
+form input,
+form textarea,
+form select {
+  padding: 0.8rem;
   font-size: 1em;
+  color: #F0F0F0;
+  background-color: #2B2B2B;   /* Légèrement plus clair que le fond global */
   border: 1px solid #E3651D;
   border-radius: 5px;
-  background-color: #191919;
-  color: #E3651D;
 }
 
 form button {
+  padding: 0.8rem;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   background-color: #E3651D;
   color: #191919;
-  cursor: pointer;
   transition: background-color 0.3s;
 }
 
 form button:hover {
-  background-color: #191919;
+  background-color: #F0F0F0;
   color: #E3651D;
 }
 
-/* Liste des jeux */
+/* LISTE DES JEUX */
 #gameList {
   list-style: none;
   padding: 0;
+  margin-bottom: 2rem;
 }
 
 .game-item {
-  padding: 15px;
-  margin-bottom: 10px;
+  background-color: #2B2B2B;  /* Légère variante pour contraster */
   border: 1px solid #E3651D;
   border-radius: 5px;
-  background-color: #191919;
+  padding: 1rem;
+  margin-bottom: 1rem;
   transition: box-shadow 0.3s;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.5rem;
 }
 
 .game-item:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
+.game-item strong {
+  font-size: 1.1em;
+}
+
+.game-item p.description {
+  margin-top: 0.5rem;
+  line-height: 1.4;
+}
+
 .game-item button {
   align-self: flex-end;
-  padding: 5px 10px;
+  padding: 0.5rem 1rem;
   background-color: #E3651D;
   color: #191919;
   border: none;
@@ -86,38 +115,39 @@ form button:hover {
 }
 
 .game-item button:hover {
-  background-color: #191919;
+  background-color: #F0F0F0;
   color: #E3651D;
 }
 
-/* Barre de recherche et tri */
+/* BARRE DE RECHERCHE ET TRI (SI TU UTILISES .controls) */
 .controls {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
-.controls input, .controls select {
-  padding: 10px;
+.controls input,
+.controls select {
+  padding: 0.8rem;
   border: 1px solid #E3651D;
   border-radius: 5px;
   font-size: 1em;
-  background-color: #191919;
-  color: #E3651D;
+  background-color: #2B2B2B;
+  color: #F0F0F0;
 }
 
-/* Connexion utilisateur */
+/* AUTH CONTAINER */
 #authContainer {
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-bottom: 2rem;
+  padding: 1rem;
   border: 1px solid #E3651D;
   border-radius: 5px;
-  background-color: #191919;
-  color: #E3651D;
+  background-color: #2B2B2B;
+  color: #F0F0F0;
 }
 
 #authContainer button {
-  padding: 10px 20px;
+  padding: 0.5rem 1rem;
   font-size: 1em;
   background-color: #E3651D;
   color: #191919;
@@ -125,19 +155,21 @@ form button:hover {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: 0.5rem;
 }
 
 #authContainer button:hover {
-  background-color: #191919;
+  background-color: #F0F0F0;
   color: #E3651D;
 }
 
-/* Pied de page */
+/* PIED DE PAGE */
 footer {
   text-align: center;
-  padding: 10px;
+  padding: 1rem;
   background-color: #E3651D;
-  color: #191919;
+  color: #F0F0F0;
   bottom: 0;
   width: 100%;
+  margin-top: 1rem;
 }

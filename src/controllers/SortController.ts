@@ -9,8 +9,7 @@ export class SortController {
     this.onGamesUpdated = onGamesUpdated;
   }
 
-  // Tri des jeux
-  sortGames(order: string) {
+  sortGames(order: string): void {
     const sortedGames = [...this.games]; // Copie pour éviter de modifier l'original
 
     if (order === "title-asc") {
@@ -29,11 +28,10 @@ export class SortController {
       );
     }
 
-    this.onGamesUpdated(sortedGames); // Met à jour la vue avec les jeux triés
+    this.onGamesUpdated(sortedGames);
   }
 
-  // Mise à jour des jeux après modification (ajout, suppression, chargement)
-  updateGames(games: JeuVideo[]) {
+  updateGames(games: JeuVideo[]): void {
     this.games = games;
   }
 }

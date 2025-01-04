@@ -9,10 +9,10 @@ export class SearchController {
     this.onGamesUpdated = onGamesUpdated;
   }
 
-  // Filtre les jeux en fonction du mot-clé
-  filterGames(keyword: string) {
+  filterGames(keyword: string): void {
+    const loweredKeyword = keyword.toLowerCase();
     const filteredGames = this.games.filter((game) =>
-      game.titre.toLowerCase().includes(keyword)
+      game.titre.toLowerCase().includes(loweredKeyword)
     );
     this.onGamesUpdated(filteredGames);
   }

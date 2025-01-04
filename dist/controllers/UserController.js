@@ -29,11 +29,9 @@ export class UserController {
             }
         });
     }
-    // Vérifie si un utilisateur est connecté
     isLoggedIn() {
         return this.currentUser !== null;
     }
-    // Retourne l'utilisateur connecté
     getUser() {
         return this.currentUser;
     }
@@ -46,39 +44,46 @@ export class UserController {
             }
             const newUser = { username, password };
             this.users.push(newUser);
-            // Sauvegarder dans localStorage
+            // Sauvegarde dans localStorage
             localStorage.setItem("currentUser", JSON.stringify(newUser));
-            // Créer une bibliothèque vide dans bibliotheque.json
-            const libraryResponse = yield fetch("./data/bibliotheque.json");
-            const libraryData = yield libraryResponse.json();
-            libraryData[username] = [];
-            yield fetch("./data/bibliotheque.json", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(libraryData)
-            });
-            // Connecte directement l'utilisateur
-            this.currentUser = newUser;
-            return true;
+            // Mettre à jour bibliotheque.json
+            try {
+                const libraryResponse = yield fetch("./data/bibliotheque.json");
+                const libraryData = yield libraryResponse.json();
+                libraryData[username] = [];
+                yield fetch("./data/bibliotheque.json", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(libraryData),
+                });
+                // Connecte directement l'utilisateur
+                this.currentUser = newUser;
+                return true;
+            }
+            catch (err) {
+                console.error("Erreur mise à jour bibliotheque.json :", err);
+                return false;
+            }
         });
     }
-    // Connexion
     login(username, password) {
-        const user = this.users.find(user => user.username === username && user.password === password);
+        // Vérification dans this.users
+        const user = this.users.find(u => u.username === username && u.password === password);
         if (user) {
             this.currentUser = user;
             return true;
         }
-        // Vérifie dans localStorage pour les nouveaux comptes
+        // Vérifie dans localStorage
         const storedUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-        if (storedUser && storedUser.username === username && storedUser.password === password) {
+        if (storedUser &&
+            storedUser.username === username &&
+            storedUser.password === password) {
             this.currentUser = storedUser;
             return true;
         }
         alert("Identifiants incorrects.");
         return false;
     }
-    // Déconnexion
     logout() {
         this.currentUser = null;
         localStorage.removeItem("currentUser");

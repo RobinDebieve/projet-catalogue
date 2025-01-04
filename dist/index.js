@@ -15,104 +15,116 @@ import { UserController } from "./controllers/UserController.js";
 import { UserView } from "./views/UserView.js";
 import { SortController } from "./controllers/SortController.js";
 import { SearchController } from "./controllers/SearchController.js";
-// Initialisation
 const gameView = new GameView("gameList");
-const gameController = new GameController((games) => {
-    gameView.renderGames(games);
-    updateControllers(games); // Met à jour les contrôleurs lors du chargement
-});
 const userController = new UserController();
 const userView = new UserView();
-// Sort and Search Controllers
 let sortController;
 let searchController;
-// Mise à jour des contrôleurs
-function updateControllers(games) {
-    // Initialisation si non définis
+// Instanciation du GameController : on lui passe la callback de mise à jour
+const gameController = new GameController((games) => {
+    gameView.renderGames(games);
+    syncControllers(games);
+});
+// Synchronise les jeux avec les contrôleurs de tri/recherche
+function syncControllers(games) {
     if (!sortController) {
-        sortController = new SortController(games, (sortedGames) => gameView.renderGames(sortedGames));
+        sortController = new SortController(games, (sortedGames) => {
+            gameView.renderGames(sortedGames);
+        });
     }
     else {
-        sortController.updateGames(games); // Met à jour le tri avec les nouveaux jeux
+        sortController.updateGames(games);
     }
     if (!searchController) {
-        searchController = new SearchController(games, (filteredGames) => gameView.renderGames(filteredGames));
+        searchController = new SearchController(games, (filteredGames) => {
+            gameView.renderGames(filteredGames);
+        });
     }
     else {
-        searchController = new SearchController(games, (filteredGames) => gameView.renderGames(filteredGames));
+        searchController = new SearchController(games, (filteredGames) => {
+            gameView.renderGames(filteredGames);
+        });
     }
 }
-// Chargement des jeux en fonction de l'état de connexion
 function loadGamesForUser() {
     return __awaiter(this, void 0, void 0, function* () {
         const user = userController.getUser();
-        if (user) {
-            fetch("./data/bibliotheque.json")
-                .then((response) => response.json())
-                .then((data) => {
+        try {
+            if (user) {
+                const response = yield fetch("./data/bibliotheque.json");
+                const data = yield response.json();
                 const library = data[user.username] || [];
-                gameController.loadGames(library);
-            })
-                .catch(() => alert("Erreur lors du chargement de la bibliothèque."));
+                yield gameController.loadGames(library);
+            }
+            else {
+                const response = yield fetch("./data/jeux.json");
+                const data = yield response.json();
+                yield gameController.loadGames(data);
+            }
         }
-        else {
-            fetch("./data/jeux.json")
-                .then((response) => response.json())
-                .then((data) => gameController.loadGames(data))
-                .catch(() => alert("Erreur lors du chargement des jeux."));
+        catch (err) {
+            alert("Erreur lors du chargement des jeux.");
+            console.error(err);
         }
     });
 }
-// Mise à jour de l'interface utilisateur
 function updateAuthUI() {
     var _a, _b;
     const authContainer = document.getElementById("authContainer");
-    if (authContainer) {
-        if (userController.isLoggedIn()) {
-            const user = userController.getUser();
-            authContainer.innerHTML = `<p>Bienvenue, ${user.username}</p><button id="logoutBtn">Déconnexion</button>`;
+    if (!authContainer)
+        return;
+    if (userController.isLoggedIn()) {
+        const user = userController.getUser();
+        if (user) {
+            authContainer.innerHTML = `
+        <p>Bienvenue, ${user.username}</p>
+        <button id="logoutBtn">Déconnexion</button>
+      `;
             (_a = document.getElementById("logoutBtn")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", () => {
                 userController.logout();
                 alert("Déconnexion réussie.");
                 location.reload();
             });
         }
-        else {
-            userView.renderLoginForm("authContainer", (username, password) => {
-                if (userController.login(username, password)) {
-                    alert("Connexion réussie.");
-                    loadGamesForUser();
-                    updateAuthUI();
+    }
+    else {
+        // Formulaire de connexion
+        userView.renderLoginForm("authContainer", (username, password) => {
+            if (userController.login(username, password)) {
+                alert("Connexion réussie.");
+                loadGamesForUser();
+                updateAuthUI();
+            }
+            else {
+                alert("Identifiants incorrects.");
+            }
+        });
+        // Lien inscription
+        const signupLink = document.createElement("p");
+        signupLink.innerHTML = `
+      Pas encore de compte ? <a href='#' id='showSignup'>Inscrivez-vous</a>
+    `;
+        authContainer.appendChild(signupLink);
+        (_b = document.getElementById("showSignup")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+            userView.renderSignupForm("authContainer", (username, password) => __awaiter(this, void 0, void 0, function* () {
+                const success = yield userController.addUser(username, password);
+                if (success) {
+                    alert("Compte créé avec succès. Connectez-vous maintenant.");
+                    location.reload();
                 }
                 else {
-                    alert("Identifiants incorrects.");
+                    alert("Échec de la création du compte. Nom d'utilisateur déjà pris.");
                 }
-            });
-            const signupLink = document.createElement("p");
-            signupLink.innerHTML =
-                "Pas encore de compte ? <a href='#' id='showSignup'>Inscrivez-vous</a>";
-            authContainer.appendChild(signupLink);
-            (_b = document.getElementById("showSignup")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
-                userView.renderSignupForm("authContainer", (username, password) => __awaiter(this, void 0, void 0, function* () {
-                    const success = yield userController.addUser(username, password);
-                    if (success) {
-                        alert("Compte créé avec succès. Connectez-vous maintenant.");
-                        location.reload();
-                    }
-                    else {
-                        alert("Échec de la création du compte. Nom d'utilisateur déjà pris.");
-                    }
-                }));
             }));
-        }
+        }));
     }
 }
-// Charger les jeux au démarrage
-document.addEventListener("DOMContentLoaded", () => {
-    loadGamesForUser();
+// Au chargement de la page
+document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
+    yield loadGamesForUser();
     updateAuthUI();
-});
-// Gestion du formulaire d'ajout
+}));
+// Formulaire d'ajout de jeu
 const addGameForm = document.getElementById("addGameForm");
 addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -127,25 +139,29 @@ addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventLi
     }
     const newGame = new JeuVideo(Date.now(), title, studio, platform, releaseDate, description);
     gameController.addGame(newGame);
-    updateControllers(gameController.getGames()); // Mise à jour des contrôleurs
+    // `gameController` appelle déjà onGamesUpdated => la vue se met à jour et syncControllers est appelé.
     addGameForm.reset();
 });
-// Recherche et tri
+// Barre de recherche
 (_a = document.getElementById("search")) === null || _a === void 0 ? void 0 : _a.addEventListener("input", (e) => {
     const keyword = e.target.value.toLowerCase();
-    searchController.filterGames(keyword);
+    if (searchController) {
+        searchController.filterGames(keyword);
+    }
 });
+// Tri
 (_b = document.getElementById("sort")) === null || _b === void 0 ? void 0 : _b.addEventListener("change", (e) => {
     const sortOption = e.target.value;
-    sortController.sortGames(sortOption); // Tri en fonction de l'option choisie
+    if (sortController) {
+        sortController.sortGames(sortOption);
+    }
 });
-// Gestion de la suppression
+// Suppression d'un jeu
 (_c = document.getElementById("gameList")) === null || _c === void 0 ? void 0 : _c.addEventListener("click", (e) => {
     const target = e.target;
     if (target.classList.contains("removeBtn")) {
         const id = parseInt(target.getAttribute("data-id") || "0", 10);
         gameController.removeGame(id);
-        updateControllers(gameController.getGames()); // Mise à jour des contrôleurs après suppression
     }
 });
 //# sourceMappingURL=index.js.map

@@ -3,7 +3,6 @@ export class SortController {
         this.games = games;
         this.onGamesUpdated = onGamesUpdated;
     }
-    // Tri des jeux
     sortGames(order) {
         const sortedGames = [...this.games]; // Copie pour éviter de modifier l'original
         if (order === "title-asc") {
@@ -18,9 +17,8 @@ export class SortController {
         else if (order === "date-desc") {
             sortedGames.sort((a, b) => new Date(b.dateDeSortie).getTime() - new Date(a.dateDeSortie).getTime());
         }
-        this.onGamesUpdated(sortedGames); // Met à jour la vue avec les jeux triés
+        this.onGamesUpdated(sortedGames);
     }
-    // Mise à jour des jeux après modification (ajout, suppression, chargement)
     updateGames(games) {
         this.games = games;
     }

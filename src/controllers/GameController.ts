@@ -9,39 +9,36 @@ export class GameController {
     this.onGamesUpdated = onGamesUpdated;
   }
 
-  // Charge les jeux depuis un tableau ou JSON
-  async loadGames(source: string | JeuVideo[]) {
+  // Charge les jeux depuis une URL (string) ou un tableau de JeuVideo
+  async loadGames(source: string | JeuVideo[]): Promise<void> {
     if (typeof source === "string") {
       try {
         const response = await fetch(source);
         if (!response.ok) {
-          throw new Error("Erreur lors du chargement des jeux.");
+          throw new Error("Erreur lors du chargement des jeux depuis " + source);
         }
-        const data = await response.json();
+        const data: JeuVideo[] = await response.json();
         this.games = data;
       } catch (error) {
         console.error("Erreur :", error);
         this.games = [];
       }
     } else {
-      this.games = source;
+      this.games = source; // JeuVideo[]
     }
     this.onGamesUpdated(this.games);
   }
 
-  // Retourne la liste des jeux
   getGames(): JeuVideo[] {
     return this.games;
   }
 
-  // Ajoute un jeu
-  addGame(game: JeuVideo) {
+  addGame(game: JeuVideo): void {
     this.games.push(game);
     this.onGamesUpdated(this.games);
   }
 
-  // Supprime un jeu par ID
-  removeGame(id: number) {
+  removeGame(id: number): void {
     this.games = this.games.filter((game) => game.id !== id);
     this.onGamesUpdated(this.games);
   }

@@ -5,7 +5,8 @@ export class Utilisateur {
         this.email = email;
     }
     afficherDetails() {
-        console.log(`Utilisateur: ${this.username}, Email: ${this.email}`);
+        var _a;
+        console.log(`Utilisateur: ${this.username}, Email: ${(_a = this.email) !== null && _a !== void 0 ? _a : "N/A"}`);
     }
 }
 //# sourceMappingURL=Utilisateur.js.map

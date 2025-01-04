@@ -12,14 +12,14 @@ export class GameController {
         this.games = [];
         this.onGamesUpdated = onGamesUpdated;
     }
-    // Charge les jeux depuis un tableau ou JSON
+    // Charge les jeux depuis une URL (string) ou un tableau de JeuVideo
     loadGames(source) {
         return __awaiter(this, void 0, void 0, function* () {
             if (typeof source === "string") {
                 try {
                     const response = yield fetch(source);
                     if (!response.ok) {
-                        throw new Error("Erreur lors du chargement des jeux.");
+                        throw new Error("Erreur lors du chargement des jeux depuis " + source);
                     }
                     const data = yield response.json();
                     this.games = data;
@@ -30,21 +30,18 @@ export class GameController {
                 }
             }
             else {
-                this.games = source;
+                this.games = source; // JeuVideo[]
             }
             this.onGamesUpdated(this.games);
         });
     }
-    // Retourne la liste des jeux
     getGames() {
         return this.games;
     }
-    // Ajoute un jeu
     addGame(game) {
         this.games.push(game);
         this.onGamesUpdated(this.games);
     }
-    // Supprime un jeu par ID
     removeGame(id) {
         this.games = this.games.filter((game) => game.id !== id);
         this.onGamesUpdated(this.games);
