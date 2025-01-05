@@ -46,28 +46,67 @@ function syncControllers(games) {
         });
     }
 }
+/**
+ * Charge les jeux pour l'utilisateur connecté si possible,
+ * depuis localStorage si présent, sinon depuis bibliotheque.json.
+ * Si l'utilisateur n'est pas connecté, on charge jeux.json.
+ */
 function loadGamesForUser() {
     return __awaiter(this, void 0, void 0, function* () {
         const user = userController.getUser();
-        try {
-            if (user) {
-                const response = yield fetch("./data/bibliotheque.json");
-                const data = yield response.json();
-                const library = data[user.username] || [];
-                yield gameController.loadGames(library);
+        if (user) {
+            // Tente de charger la liste depuis localStorage
+            const localLibKey = "library_" + user.username;
+            const localLib = localStorage.getItem(localLibKey);
+            if (localLib) {
+                // On a une bibliothèque locale pour cet utilisateur
+                const library = JSON.parse(localLib);
+                gameController.loadGames(library);
             }
             else {
-                const response = yield fetch("./data/jeux.json");
-                const data = yield response.json();
-                yield gameController.loadGames(data);
+                // Sinon on charge depuis bibliotheque.json
+                try {
+                    const response = yield fetch("./data/bibliotheque.json");
+                    const data = yield response.json();
+                    const userLibrary = data[user.username] || [];
+                    gameController.loadGames(userLibrary);
+                }
+                catch (err) {
+                    alert("Erreur lors du chargement de la bibliothèque.");
+                    console.error(err);
+                }
             }
         }
-        catch (err) {
-            alert("Erreur lors du chargement des jeux.");
-            console.error(err);
+        else {
+            // L'utilisateur n'est pas connecté => on charge jeux.json
+            try {
+                const response = yield fetch("./data/jeux.json");
+                const data = yield response.json();
+                gameController.loadGames(data);
+            }
+            catch (err) {
+                alert("Erreur lors du chargement des jeux.");
+                console.error(err);
+            }
         }
     });
 }
+/**
+ * Sauvegarde la liste de jeux courante dans localStorage
+ * pour l'utilisateur connecté (si connecté).
+ */
+function saveLibraryToLocalStorage() {
+    const user = userController.getUser();
+    if (!user)
+        return;
+    const localLibKey = "library_" + user.username;
+    const currentGames = gameController.getGames();
+    localStorage.setItem(localLibKey, JSON.stringify(currentGames));
+}
+/**
+ * Met à jour l'UI d'authentification (login/logout)
+ * et place le formulaire adéquat.
+ */
 function updateAuthUI() {
     var _a, _b;
     const authContainer = document.getElementById("authContainer");
@@ -138,8 +177,10 @@ addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventLi
         return;
     }
     const newGame = new JeuVideo(Date.now(), title, studio, platform, releaseDate, description);
+    // Ajoute le jeu en mémoire
     gameController.addGame(newGame);
-    // `gameController` appelle déjà onGamesUpdated => la vue se met à jour et syncControllers est appelé.
+    // Sauvegarde immédiatement dans localStorage si user connecté
+    saveLibraryToLocalStorage();
     addGameForm.reset();
 });
 // Barre de recherche
@@ -162,6 +203,8 @@ addGameForm === null || addGameForm === void 0 ? void 0 : addGameForm.addEventLi
     if (target.classList.contains("removeBtn")) {
         const id = parseInt(target.getAttribute("data-id") || "0", 10);
         gameController.removeGame(id);
+        // Sauvegarde après suppression
+        saveLibraryToLocalStorage();
     }
 });
 //# sourceMappingURL=index.js.map
