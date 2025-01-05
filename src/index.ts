@@ -9,11 +9,9 @@ import { SearchController } from "./controllers/SearchController.js";
 const gameView = new GameView("gameList");
 const userController = new UserController();
 const userView = new UserView();
-
 let sortController: SortController;
 let searchController: SearchController;
 
-// Instanciation du GameController : on lui passe la callback de mise à jour
 const gameController = new GameController((games) => {
   gameView.renderGames(games);
   syncControllers(games);
@@ -41,62 +39,58 @@ function syncControllers(games: JeuVideo[]) {
 }
 
 /**
- * Charge les jeux pour l'utilisateur connecté si possible,
- * depuis localStorage si présent, sinon depuis bibliotheque.json.
- * Si l'utilisateur n'est pas connecté, on charge jeux.json.
- */
-async function loadGamesForUser() {
-  const user = userController.getUser();
-  if (user) {
-    // Tente de charger la liste depuis localStorage
-    const localLibKey = "library_" + user.username;
-    const localLib = localStorage.getItem(localLibKey);
-
-    if (localLib) {
-      // On a une bibliothèque locale pour cet utilisateur
-      const library = JSON.parse(localLib);
-      gameController.loadGames(library);
-    } else {
-      // Sinon on charge depuis bibliotheque.json
-      try {
-        const response = await fetch("./data/bibliotheque.json");
-        const data = await response.json();
-        const userLibrary = data[user.username] || [];
-        gameController.loadGames(userLibrary);
-      } catch (err) {
-        alert("Erreur lors du chargement de la bibliothèque.");
-        console.error(err);
-      }
-    }
-  } else {
-    // L'utilisateur n'est pas connecté => on charge jeux.json
-    try {
-      const response = await fetch("./data/jeux.json");
-      const data = await response.json();
-      gameController.loadGames(data);
-    } catch (err) {
-      alert("Erreur lors du chargement des jeux.");
-      console.error(err);
-    }
-  }
-}
-
-/** 
- * Sauvegarde la liste de jeux courante dans localStorage 
- * pour l'utilisateur connecté (si connecté).
+ * Sauvegarde la bibliothèque courante (gameController.getGames()) dans localStorage
+ * sous la clé "library_<username>" si l'utilisateur est connecté.
  */
 function saveLibraryToLocalStorage() {
   const user = userController.getUser();
   if (!user) return;
 
-  const localLibKey = "library_" + user.username;
-  const currentGames = gameController.getGames();
-  localStorage.setItem(localLibKey, JSON.stringify(currentGames));
+  const library = gameController.getGames();
+  localStorage.setItem(`library_${user.username}`, JSON.stringify(library));
 }
 
-/** 
- * Met à jour l'UI d'authentification (login/logout) 
- * et place le formulaire adéquat.
+/**
+ * Charge la bibliothèque d'un utilisateur depuis localStorage (si existant) 
+ * ou depuis bibliotheque.json (sinon).
+ * Pour un utilisateur non connecté, on charge jeux.json.
+ */
+async function loadGamesForUser(): Promise<void> {
+  const user = userController.getUser();
+  try {
+    if (user) {
+      // 1) Regarder s'il existe une bibliothèque en localStorage
+      const localLibKey = `library_${user.username}`;
+      const localLib = localStorage.getItem(localLibKey);
+      if (localLib) {
+        console.log("[loadGamesForUser] Chargement depuis localStorage");
+        const library = JSON.parse(localLib);
+        await gameController.loadGames(library);
+      } else {
+        // sinon, on prend bibliotheque.json UNE FOIS
+        console.log("[loadGamesForUser] Chargement depuis bibliotheque.json");
+        const response = await fetch("./data/bibliotheque.json");
+        const data = await response.json();
+        const library = data[user.username] || [];
+        await gameController.loadGames(library);
+
+        // Puis on enregistre en localStorage
+        localStorage.setItem(localLibKey, JSON.stringify(library));
+      }
+    } else {
+      // Pas connecté => on charge jeux.json
+      const response = await fetch("./data/jeux.json");
+      const data = await response.json();
+      await gameController.loadGames(data);
+    }
+  } catch (err) {
+    alert("Erreur lors du chargement des jeux.");
+    console.error(err);
+  }
+}
+
+/**
+ * Met à jour l'UI d'authentification.
  */
 function updateAuthUI(): void {
   const authContainer = document.getElementById("authContainer");
@@ -171,18 +165,18 @@ addGameForm?.addEventListener("submit", (e) => {
   }
 
   const newGame = new JeuVideo(
-    Date.now(), 
-    title, 
-    studio, 
-    platform, 
-    releaseDate, 
+    Date.now(),
+    title,
+    studio,
+    platform,
+    releaseDate,
     description
   );
 
   // Ajoute le jeu en mémoire
   gameController.addGame(newGame);
 
-  // Sauvegarde immédiatement dans localStorage si user connecté
+  // Sauvegarde la liste mise à jour dans localStorage pour l'utilisateur
   saveLibraryToLocalStorage();
 
   addGameForm.reset();
@@ -211,7 +205,7 @@ document.getElementById("gameList")?.addEventListener("click", (e) => {
     const id = parseInt(target.getAttribute("data-id") || "0", 10);
     gameController.removeGame(id);
 
-    // Sauvegarde après suppression
+    // Après suppression, on sauvegarde la liste mise à jour
     saveLibraryToLocalStorage();
   }
 });

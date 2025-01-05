@@ -1,4 +1,4 @@
-// UserController.ts (exemple simplifié)
+// src/controllers/UserController.ts
 import { IUtilisateur } from "../models/IUtilisateur.js";
 
 export class UserController {
@@ -8,27 +8,27 @@ export class UserController {
   constructor() {
     this.users = [];
     this.currentUser = null;
-    this.loadUsers(); // charge depuis localStorage ou users.json
+    this.loadUsers();
   }
 
-  // Charge les utilisateurs
   private async loadUsers(): Promise<void> {
-    // 1. Vérifier dans localStorage
+    // 1) Vérifie si on a déjà userList dans localStorage
     const localUsers = localStorage.getItem("userList");
     if (localUsers) {
-      console.log("Chargement des utilisateurs depuis localStorage");
+      console.log("[loadUsers] localStorage => skip fetch");
       this.users = JSON.parse(localUsers);
       return;
     }
 
-    // 2. Sinon, fetch users.json
+    // 2) Sinon, on fetch users.json
+    console.log("[loadUsers] pas de userList => fetch users.json");
     try {
       const response = await fetch("./data/users.json");
       if (!response.ok) {
         throw new Error("Erreur lors du chargement des utilisateurs.");
       }
       this.users = await response.json();
-      // Sauvegarde en localStorage (pour persister si on fait des modifs plus tard)
+      // On sauvegarde dans localStorage
       localStorage.setItem("userList", JSON.stringify(this.users));
     } catch (error) {
       console.error(error);
@@ -40,12 +40,13 @@ export class UserController {
     return this.currentUser !== null;
   }
 
-  getUser(): IUtilisateur | null {
+  getUser() {
     return this.currentUser;
   }
 
   async addUser(username: string, password: string): Promise<boolean> {
-    if (this.users.find(user => user.username === username)) {
+    // Vérifie doublon
+    if (this.users.find(u => u.username === username)) {
       alert("Ce nom d'utilisateur existe déjà.");
       return false;
     }
@@ -53,31 +54,35 @@ export class UserController {
     const newUser: IUtilisateur = { username, password };
     this.users.push(newUser);
 
-    // Sauvegarde la liste entière
+    // Met à jour la liste dans localStorage
     localStorage.setItem("userList", JSON.stringify(this.users));
 
-    // Connecte directement
+    // On sauvegarde le currentUser
     this.currentUser = newUser;
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
 
+    // Inutile de tenter un PUT sur bibliotheque.json dans un serveur statique
+    // => on retire cette logique
+
+    console.log(`[addUser] Compte créé : ${username}`);
     return true;
   }
 
   login(username: string, password: string): boolean {
-    // On s'assure que this.users est bien chargé
+    // Vérifie dans this.users
     const user = this.users.find(u => u.username === username && u.password === password);
     if (user) {
       this.currentUser = user;
-      localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+      localStorage.setItem("currentUser", JSON.stringify(user));
       return true;
     }
 
-    // Vérifier un user stocké localement (optionnel si on manipule tout dans this.users)
-    const storedUserStr = localStorage.getItem("currentUser");
-    if (storedUserStr) {
-      const storedUser = JSON.parse(storedUserStr) as IUtilisateur;
-      if (storedUser.username === username && storedUser.password === password) {
-        this.currentUser = storedUser;
+    // Vérifie dans localStorage si currentUser match
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      const uObj = JSON.parse(storedUser) as IUtilisateur;
+      if (uObj.username === username && uObj.password === password) {
+        this.currentUser = uObj;
         return true;
       }
     }
