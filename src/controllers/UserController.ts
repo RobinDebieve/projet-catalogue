@@ -1,4 +1,4 @@
-// UserController.ts (exemple simplifié)
+// UserController.ts
 import { IUtilisateur } from "../models/IUtilisateur.js";
 
 export class UserController {
@@ -8,27 +8,29 @@ export class UserController {
   constructor() {
     this.users = [];
     this.currentUser = null;
-    this.loadUsers(); // charge depuis localStorage ou users.json
+    this.loadUsers(); // => Appel direct
   }
 
-  // Charge les utilisateurs
   private async loadUsers(): Promise<void> {
-    // 1. Vérifier dans localStorage
+    // 1) Vérifier si on a déjà "userList" dans localStorage
     const localUsers = localStorage.getItem("userList");
     if (localUsers) {
-      console.log("Chargement des utilisateurs depuis localStorage");
+      // on charge directement depuis localStorage
+      console.log("[loadUsers] localStorage détecté, pas de fetch");
       this.users = JSON.parse(localUsers);
-      return;
+      return; // on s'arrête là
     }
 
-    // 2. Sinon, fetch users.json
+    // 2) Sinon, on fetch users.json
+    console.log("[loadUsers] localStorage vide, on fetch users.json");
     try {
       const response = await fetch("./data/users.json");
       if (!response.ok) {
         throw new Error("Erreur lors du chargement des utilisateurs.");
       }
       this.users = await response.json();
-      // Sauvegarde en localStorage (pour persister si on fait des modifs plus tard)
+
+      // On stocke aussi dans localStorage pour la suite
       localStorage.setItem("userList", JSON.stringify(this.users));
     } catch (error) {
       console.error(error);
@@ -45,7 +47,8 @@ export class UserController {
   }
 
   async addUser(username: string, password: string): Promise<boolean> {
-    if (this.users.find(user => user.username === username)) {
+    // Vérifie si user existe déjà
+    if (this.users.find(u => u.username === username)) {
       alert("Ce nom d'utilisateur existe déjà.");
       return false;
     }
@@ -53,33 +56,51 @@ export class UserController {
     const newUser: IUtilisateur = { username, password };
     this.users.push(newUser);
 
-    // Sauvegarde la liste entière
-    localStorage.setItem("userList", JSON.stringify(this.users));
+    // (Facultatif) on peut mettre à jour "userList" en localStorage (pas juste currentUser)
+    const allUsers = [...this.users]; // clonage
+    localStorage.setItem("userList", JSON.stringify(allUsers));
 
-    // Connecte directement
-    this.currentUser = newUser;
-    localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
+    // Sauvegarde le "currentUser"
+    localStorage.setItem("currentUser", JSON.stringify(newUser));
 
-    return true;
+    // Mettre à jour bibliotheque.json
+    try {
+      const libraryResponse = await fetch("./data/bibliotheque.json");
+      const libraryData = await libraryResponse.json();
+      libraryData[username] = [];
+
+      await fetch("./data/bibliotheque.json", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(libraryData),
+      });
+
+      // Connecte directement l'utilisateur
+      this.currentUser = newUser;
+      return true;
+    } catch (err) {
+      console.error("Erreur mise à jour bibliotheque.json :", err);
+      return false;
+    }
   }
 
   login(username: string, password: string): boolean {
-    // On s'assure que this.users est bien chargé
+    // Vérification dans this.users
     const user = this.users.find(u => u.username === username && u.password === password);
     if (user) {
       this.currentUser = user;
-      localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
       return true;
     }
 
-    // Vérifier un user stocké localement (optionnel si on manipule tout dans this.users)
-    const storedUserStr = localStorage.getItem("currentUser");
-    if (storedUserStr) {
-      const storedUser = JSON.parse(storedUserStr) as IUtilisateur;
-      if (storedUser.username === username && storedUser.password === password) {
-        this.currentUser = storedUser;
-        return true;
-      }
+    // Vérifie dans localStorage
+    const storedUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+    if (
+      storedUser &&
+      storedUser.username === username &&
+      storedUser.password === password
+    ) {
+      this.currentUser = storedUser;
+      return true;
     }
 
     alert("Identifiants incorrects.");
