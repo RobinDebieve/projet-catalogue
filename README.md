@@ -20,6 +20,11 @@ Ce projet est une application web interactive développée en **TypeScript**, pe
 - Déconnexion / Reconnexion : Les changements restent persistants grâce à la sauvegarde en localStorage.
 - Tri et recherche de jeux : Possibilité de filtrer et trier la liste de jeux.
 
+## Comptes existants
+- admin (admin123)
+- user1 (password123)
+- user2 (userpass)
+
 ## Structure
 
 - **assets/**
@@ -56,6 +61,7 @@ Ce projet est une application web interactive développée en **TypeScript**, pe
 - `package.json`
 - `tsconfig.json`
 - `jest.config.js`
+
   
 ---
 
