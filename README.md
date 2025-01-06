@@ -21,17 +21,22 @@ Ce projet est une application web interactive développée en **TypeScript**, pe
 - Tri et recherche de jeux : Possibilité de filtrer et trier la liste de jeux.
 
 ## Structure
-**assets/**
+
+- **assets/**
   - `style.css`
-**data/**
+- **data/**
   - `users.json`
   - `bibliotheque.json`
   - `jeux.json`
-**dist/** (fichiers compilés en JS si tu build avec tsc)
-**src/**
+- **dist/** (fichiers compilés en JS si tu build avec tsc)
+- **src/**
   - **__tests__/**
     - `UserController.test.ts`
     - `GameController.test.ts`
+    - `GameView.test.ts`
+    - `SearchController.test.ts`
+    - `SortController.test.ts`
+    - `UserView.test.ts`
   - **controllers/**
     - `GameController.ts`
     - `UserController.ts`
@@ -46,9 +51,6 @@ Ce projet est une application web interactive développée en **TypeScript**, pe
   - **views/**
     - `GameView.ts`
     - `UserView.ts`
-  - **tests/** ou **__tests__/**
-    - `UserController.test.ts`
-    - `GameController.test.ts`
 - `index.ts`
 - `index.html`
 - `package.json`
