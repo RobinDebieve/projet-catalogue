@@ -34,15 +34,16 @@
       <button type="submit">Ajouter</button>
     </form>
 
-    <input type="text" id="search" placeholder="Rechercher un jeu...">
-
-    <select id="sort">
-      <option value="">Trier par</option>
-      <option value="title-asc">Titre (A-Z)</option>
-      <option value="title-desc">Titre (Z-A)</option>
-      <option value="date-asc">Date (Croissant)</option>
-      <option value="date-desc">Date (Décroissant)</option>
-    </select>
+    <div class="controls">
+      <input type="text" id="search" placeholder="Rechercher un jeu...">
+      <select id="sort">
+        <option value="">Trier par</option>
+        <option value="title-asc">Titre (A-Z)</option>
+        <option value="title-desc">Titre (Z-A)</option>
+        <option value="date-asc">Date (Croissant)</option>
+        <option value="date-desc">Date (Décroissant)</option>
+      </select>
+    </div>
 
     <ul id="gameList"></ul>
   </main>
@@ -51,7 +52,6 @@
     <p>&copy; 2025 Catalogue de Jeux Vidéo</p>
   </footer>
 
-  <!-- Scripts en bas de page -->
   <script src="./dist/index.js" type="module"></script>
 </body>
 </html>
