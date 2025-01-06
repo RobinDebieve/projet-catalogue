@@ -1,0 +1,27 @@
+[
+    {
+      "id": 1,
+      "titre": "Zelda",
+      "studio": "Nintendo",
+      "plateforme": "Switch",
+      "dateDeSortie": "2017-03-03",
+      "description": "Aventure épique."
+    },
+    {
+      "id": 2,
+      "titre": "Halo",
+      "studio": "Bungie",
+      "plateforme": "Xbox",
+      "dateDeSortie": "2001-11-15",
+      "description": "Jeu de tir futuriste."
+    },
+    {
+        "id": 3,
+        "titre": "Minecraft",
+        "studio": "Mojang Studios",
+        "plateforme": "all",
+        "dateDeSortie": "2011-11-18",
+        "description": "Jeu de bloc."
+      }
+  ]
+  

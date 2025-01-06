@@ -1,0 +1,72 @@
+{
+  "admin": [
+    {
+      "id": 1,
+      "titre": "Zelda",
+      "studio": "Nintendo",
+      "plateforme": "Switch",
+      "dateDeSortie": "2017-03-03",
+      "description": "Un jeu d'aventure épique."
+    },
+    {
+      "id": 2,
+      "titre": "Halo",
+      "studio": "Bungie",
+      "plateforme": "Xbox",
+      "dateDeSortie": "2001-11-15",
+      "description": "Un FPS iconique dans un univers futuriste."
+    },
+    {
+      "id": 3,
+      "titre": "The Witcher 3",
+      "studio": "CD Projekt",
+      "plateforme": "PC",
+      "dateDeSortie": "2015-05-19",
+      "description": "Un RPG en monde ouvert avec une histoire captivante."
+    },
+    {
+      "id": 4,
+      "titre": "God of War",
+      "studio": "Santa Monica Studio",
+      "plateforme": "PlayStation",
+      "dateDeSortie": "2018-04-20",
+      "description": "Une aventure épique avec Kratos."
+    }
+  ],
+  "user1": [
+    {
+      "id": 5,
+      "titre": "Minecraft",
+      "studio": "Mojang",
+      "plateforme": "PC",
+      "dateDeSortie": "2011-11-18",
+      "description": "Un jeu de construction et d'exploration."
+    },
+    {
+      "id": 6,
+      "titre": "Overwatch",
+      "studio": "Blizzard",
+      "plateforme": "PC",
+      "dateDeSortie": "2016-05-24",
+      "description": "Un FPS multijoueur basé sur des héros."
+    },
+    {
+      "id": 7,
+      "titre": "FIFA 22",
+      "studio": "EA Sports",
+      "plateforme": "PlayStation",
+      "dateDeSortie": "2021-10-01",
+      "description": "Le jeu de football ultime."
+    }
+  ],
+  "user2": [
+    {
+      "id": 8,
+      "titre": "Cyberpunk 2077",
+      "studio": "CD Projekt",
+      "plateforme": "PC",
+      "dateDeSortie": "2020-12-10",
+      "description": "Un RPG futuriste dans un monde dystopique."
+    }
+  ]
+}

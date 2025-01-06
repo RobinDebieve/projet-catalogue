@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catalogue de Jeux Vidéo</title>
+  <link rel="stylesheet" href="./assets/styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>Catalogue de Jeux Vidéo</h1>
+    <div id="authContainer"></div>
+  </header>
+
+  <main>
+    <form id="addGameForm">
+      <h2>Ajouter un jeu</h2>
+      
+      <label for="title">Titre</label>
+      <input type="text" id="title" placeholder="Titre" required>
+
+      <label for="studio">Studio</label>
+      <input type="text" id="studio" placeholder="Studio" required>
+
+      <label for="platform">Plateforme</label>
+      <input type="text" id="platform" placeholder="Plateforme" required>
+
+      <label for="releaseDate">Date de sortie</label>
+      <input type="date" id="releaseDate" required>
+
+      <label for="description">Description</label>
+      <textarea id="description" placeholder="Description" required></textarea>
+      
+      <button type="submit">Ajouter</button>
+    </form>
+
+    <div class="controls">
+      <input type="text" id="search" placeholder="Rechercher un jeu...">
+      <select id="sort">
+        <option value="">Trier par</option>
+        <option value="title-asc">Titre (A-Z)</option>
+        <option value="title-desc">Titre (Z-A)</option>
+        <option value="date-asc">Date (Croissant)</option>
+        <option value="date-desc">Date (Décroissant)</option>
+      </select>
+    </div>
+
+    <ul id="gameList"></ul>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Catalogue de Jeux Vidéo</p>
+  </footer>
+
+  <script src="./dist/index.js" type="module"></script>
+</body>
+</html>
