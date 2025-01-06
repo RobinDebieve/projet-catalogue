@@ -1,4 +1,3 @@
-// src/controllers/UserController.ts
 import { IUtilisateur } from "../models/IUtilisateur.js";
 
 export class UserController {
@@ -60,9 +59,6 @@ export class UserController {
     // On sauvegarde le currentUser
     this.currentUser = newUser;
     localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
-
-    // Inutile de tenter un PUT sur bibliotheque.json dans un serveur statique
-    // => on retire cette logique
 
     console.log(`[addUser] Compte créé : ${username}`);
     return true;

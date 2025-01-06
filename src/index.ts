@@ -38,10 +38,7 @@ function syncControllers(games: JeuVideo[]) {
   }
 }
 
-/**
- * Sauvegarde la bibliothèque courante (gameController.getGames()) dans localStorage
- * sous la clé "library_<username>" si l'utilisateur est connecté.
- */
+
 function saveLibraryToLocalStorage() {
   const user = userController.getUser();
   if (!user) return;
@@ -50,11 +47,7 @@ function saveLibraryToLocalStorage() {
   localStorage.setItem(`library_${user.username}`, JSON.stringify(library));
 }
 
-/**
- * Charge la bibliothèque d'un utilisateur depuis localStorage (si existant) 
- * ou depuis bibliotheque.json (sinon).
- * Pour un utilisateur non connecté, on charge jeux.json.
- */
+
 async function loadGamesForUser(): Promise<void> {
   const user = userController.getUser();
   try {
@@ -89,9 +82,9 @@ async function loadGamesForUser(): Promise<void> {
   }
 }
 
-/**
- * Met à jour l'UI d'authentification.
- */
+
+//Met à jour l'UI d'authentification.
+ 
 function updateAuthUI(): void {
   const authContainer = document.getElementById("authContainer");
   if (!authContainer) return;

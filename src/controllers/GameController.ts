@@ -9,7 +9,7 @@ export class GameController {
     this.onGamesUpdated = onGamesUpdated;
   }
 
-  // Charge les jeux depuis une URL (string) ou un tableau de JeuVideo
+
   async loadGames(source: string | JeuVideo[]): Promise<void> {
     if (typeof source === "string") {
       try {
@@ -24,7 +24,7 @@ export class GameController {
         this.games = [];
       }
     } else {
-      this.games = source; // JeuVideo[]
+      this.games = source; 
     }
     this.onGamesUpdated(this.games);
   }

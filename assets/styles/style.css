@@ -1,175 +1,217 @@
-/* RESET GLOBALE */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* STYLES GENERAUX */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #191919;
-  color: #F0F0F0;              /* Texte clair sur fond sombre */
-  line-height: 1.6;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
+  line-height: 1.5;
 }
 
-/* HEADER */
+/* Header */
 header {
-  background-color: #E3651D;   /* Couleur d'accent */
-  color: #F0F0F0;             /* Texte clair */
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 1rem;
+}
+
+/* Titre */
+header h1 {
+  color: #6366f1;
+  font-size: 1.75rem;
+  font-weight: 700;
   text-align: center;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
   padding: 1rem;
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-bottom: 1rem;         /* Pour aérer un peu */
+  z-index: 10;
+  margin: -1rem -1rem 1rem -1rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-/* MAIN */
+/* Main */
 main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
 }
 
-/* FORMULAIRE D'AJOUT */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
+/* Search and Sort */
+#search, #sort {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+}
+
+#search:focus, #sort:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+
+/* Form */
+#addGameForm {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow:  0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+#addGameForm h2 {
+  color: #1e293b;
   margin-bottom: 1.5rem;
+  font-size: 1.5rem;
 }
 
-form label {
-  font-weight: bold;
-  color: #F0F0F0;             /* Couleur de texte pour les labels */
+form {
+  display: grid;
+  gap: 1.25rem;
 }
 
-form input,
-form textarea,
-form select {
-  padding: 0.8rem;
-  font-size: 1em;
-  color: #F0F0F0;
-  background-color: #2B2B2B;   /* Légèrement plus clair que le fond global */
-  border: 1px solid #E3651D;
-  border-radius: 5px;
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
 form button {
-  padding: 0.8rem;
-  font-size: 1em;
+  background-color: #6366f1;
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  background-color: #E3651D;
-  color: #191919;
-  transition: background-color 0.3s;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 
 form button:hover {
-  background-color: #F0F0F0;
-  color: #E3651D;
+  background-color: #4f46e5;
 }
 
-/* LISTE DES JEUX */
+/* Game List */
 #gameList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
   list-style: none;
-  padding: 0;
-  margin-bottom: 2rem;
 }
 
 .game-item {
-  background-color: #2B2B2B;  /* Légère variante pour contraster */
-  border: 1px solid #E3651D;
-  border-radius: 5px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  transition: box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  background-color:  #ffffff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .game-item:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+  box-shadow:  0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .game-item strong {
-  font-size: 1.1em;
+  display: block;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #1e293b;
 }
 
-.game-item p.description {
-  margin-top: 0.5rem;
-  line-height: 1.4;
-}
-
-.game-item button {
-  align-self: flex-end;
-  padding: 0.5rem 1rem;
-  background-color: #E3651D;
-  color: #191919;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.game-item button:hover {
-  background-color: #F0F0F0;
-  color: #E3651D;
-}
-
-/* BARRE DE RECHERCHE ET TRI (SI TU UTILISES .controls) */
-.controls {
-  display: flex;
-  justify-content: space-between;
+.game-item p {
+  color:  #64748b;
   margin-bottom: 1rem;
 }
 
-.controls input,
-.controls select {
-  padding: 0.8rem;
-  border: 1px solid #E3651D;
-  border-radius: 5px;
-  font-size: 1em;
-  background-color: #2B2B2B;
-  color: #F0F0F0;
-}
-
-/* AUTH CONTAINER */
-#authContainer {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border: 1px solid #E3651D;
-  border-radius: 5px;
-  background-color: #2B2B2B;
-  color: #F0F0F0;
-}
-
-#authContainer button {
-  padding: 0.5rem 1rem;
-  font-size: 1em;
-  background-color: #E3651D;
-  color: #191919;
+.game-item button {
+  background-color:  #6366f1;
+  color: #ffffff;
   border: none;
-  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  transition: background-color 0.2s;
 }
 
-#authContainer button:hover {
-  background-color: #F0F0F0;
-  color: #E3651D;
+.game-item button:hover {
+  background-color:  #4f46e5;
 }
 
-/* PIED DE PAGE */
-footer {
-  text-align: center;
+/* connexion */
+#authContainer {
+  background-color: #ffffff;
   padding: 1rem;
-  background-color: #E3651D;
-  color: #F0F0F0;
-  bottom: 0;
-  width: 100%;
+  border-radius: 8px;
   margin-top: 1rem;
+}
+#logoutBtn {
+  background-color: #6366f1;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+/* Footer */
+footer {
+  background-color:  #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  text-align: center;
+  color:  #64748b;
+  margin-top: auto;
+}
+
+/* Responsive Design */
+@media (min-width: 640px) {
+  .controls {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  #search {
+    flex: 2;
+  }
+  
+  #sort {
+    flex: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 0 1rem;
+  }
+  
+  #addGameForm {
+    padding: 1.5rem;
+  }
+  
+  .game-item {
+    margin-bottom: 1rem;
+  }
 }

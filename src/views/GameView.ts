@@ -23,7 +23,6 @@ export class GameView {
       
       this.gameList.appendChild(li);
 
-      // Toggle description
       li.addEventListener("click", (e) => {
         if (!(e.target as HTMLElement).classList.contains("removeBtn")) {
           const description = li.querySelector(".description") as HTMLElement;
